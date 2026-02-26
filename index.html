@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器迁移通知</title>
+    <style>
+        /* 页面整体样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* 通知卡片样式 */
+        .notice-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        /* 标题样式 */
+        .notice-title {
+            color: #e74c3c;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        /* 内容样式 */
+        .notice-content {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        /* 网址样式 */
+        .url-text {
+            color: #7f8c8d;
+            margin: 10px 0;
+        }
+        
+        .new-url {
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 18px;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+        
+        /* 倒计时样式 */
+        .countdown {
+            color: #3498db;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        /* 手动跳转链接样式 */
+        .jump-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .jump-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="notice-card">
+        <h1 class="notice-title">服务器迁移通知</h1>
+        <div class="notice-content">
+            本网站服务器已迁移，你现在访问的是旧网址。
+        </div>
+        <!-- <div class="url-text">旧网址：<span id="oldUrl"></span></div> -->
+        <div class="url-text">新网址：<span id="newUrl" class="new-url"></span></div>
+        <!-- 修改倒计时提示，增加手动跳转链接 -->
+        <div class="countdown" id="countdown">5秒后自动跳转，若没有跳转请<a href="javascript:void(0)" id="jumpLink" class="jump-link">点此处</a>。</div>
+    </div>
+
+    <script>
+        // 获取当前页面的完整URL
+        const oldUrl = window.location.href;
+        // 将URL中的lalob替换为lovedie
+        const newUrl = oldUrl.replace('lalob', 'lovedie');
+        
+        // 显示旧网址和新网址
+        document.getElementById('oldUrl').textContent = oldUrl;
+        document.getElementById('newUrl').textContent = newUrl;
+        
+        // 手动跳转链接绑定事件
+        const jumpLink = document.getElementById('jumpLink');
+        jumpLink.onclick = function() {
+            window.location.href = newUrl;
+        };
+        
+        // 倒计时并自动跳转
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        
+        // 倒计时定时器
+        const timer = setInterval(() => {
+            countdown--;
+            // 更新倒计时文案，保留手动跳转链接
+            countdownElement.innerHTML = `${countdown}秒后自动跳转，若没有跳转请<a href="javascript:void(0)" id="jumpLink" class="jump-link">点此处</a>。`;
+            // 重新绑定点击事件（innerHTML会重置DOM，需要重新绑定）
+            document.getElementById('jumpLink').onclick = function() {
+                window.location.href = newUrl;
+            };
+            
+            // 倒计时结束，跳转到新网址
+            if (countdown <= 0) {
+                clearInterval(timer);
+                window.location.href = newUrl;
+            }
+        }, 1000);
+
+        // 容错处理：如果替换后的网址和原网址一致（没有lalob），提示用户
+        if (oldUrl === newUrl) {
+            document.querySelector('.notice-content').textContent = 
+                '你访问的是旧网址，我们已完成服务器迁移，但未检测到需要替换的网址部分。';
+            countdownElement.innerHTML = '将保持当前页面不变，<a href="javascript:void(0)" id="jumpLink" class="jump-link">点击此处</a>可尝试跳转。';
+            clearInterval(timer);
+        }
+    </script>
+</body>
+</html>
